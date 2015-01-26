@@ -1,0 +1,45 @@
+- mask input
+
+-- if unmasking is in ngModelCtrl parsers, then validators won't work correctly, unless the $viewValue is changed inside parsers (bad)
+-- if unmasking is done in $readValue, it is not possible to use a mask on an input that defines its own $readValue, unless you call the original $readValue first (bad)
+-- same issue with listening on $handleInputEvent
+
+- collections
+
+- where should the $viewValue be converted to a collection? $readValue? first parser? $handleInputEvent? (probably not this one)
+- what about viewValue validation?
+- what if we have mask + collection? convert to collection -> mask
+
+- input controller
+-- the input controller is currently not able to handle 2+ manipulation. E.g. a collection / multiple directive needs to split the input, and
+a mask directive needs to mask every input. Would be nice if the two could cooperate. This would mean that the input controller needs its own
+formatter / parser pipeline?, or it must be incorporated into ngModelController, collection Handler could also be a built-in for input controller
+
+- validation
+-- if $validate specifies the value that is to be validated, we cannot make sure legacy validators / directives work
+-- if there's an adaptor that writes to scope even if invalid, and we have the default writeToScopeIfValid adaptor, how do we overwrite its behavior? Remove it? Replace it? This is not really nice for composability. $validityChanged event is also tricky, because we need to know the source of the validation call (we only want it when it's called by $setViewValue)
+-- how can a call to $validate from outside $setModelValue / $setViewValue access the current modelValue? The default adaptor sets the $modelValue to null on invalid (which essentially causes the same problem we worked around with $$rawModelValue)
+
+- transforms
+--  if any function inside an $model/ViewValueChanged event handler throws, this counts as a parse error -> hard to debug! maybe simply look into the return value instead of try / catch?
+-- is it necessary that empty parse / format functions are called anyway?
+-- what if someone wants to keep the model like it is even if a parse error occurs? This is currently not possible because $modelValueChanged does not specify why it was changed / what triggered it
+
+
+- events + adapter
+
+-- unclear how to disable adapters, e.g. from inside a link function (no off function) - or is this already too late?
+-- not sure if there's any time $isEmpty is not about the inputController?
+
+
+- minlength
+- validators only with modelValue?
+- event mapping
+- perfomance?
+-- looking up the DOM tree
+-- events
+-- async validation
+- legacy
+-- validators
+-- formatters
+-- $setValidity
