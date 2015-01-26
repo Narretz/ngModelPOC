@@ -58,6 +58,7 @@ $ngModelAdaptors.register('writeToScopeIfValid', writeToScopeIfValid);
 $ngModelAdaptors.register('setTouchedOnBlur', setTouchedOnBlur);
 $ngModelAdaptors.register('setDirtyOnChange', setDirtyOnChange);
 $ngModelAdaptors.register('delegateIsEmptyToInputController', delegateIsEmptyToInputController);
+$ngModelAdaptors.register('writeToScopeIfInvalid', writeToScopeIfInvalid);
 $ngModelAdaptors.register('defaultAdaptor', $ngModelAdaptors.composeAdaptors([
     'watchScope',
     'writeToElement',
@@ -174,4 +175,10 @@ function setDirtyOnChange(ngModelController, inputController) {
   });
 
   ngModelController.$initState(dirtyState);
+}
+
+function writeToScopeIfInvalid(ngModelController, inputController) {
+  ngModelController.$modelValueChanged.addHandler(function(value) {
+    ngModelController.$ngModelSet(value);
+  });
 }
